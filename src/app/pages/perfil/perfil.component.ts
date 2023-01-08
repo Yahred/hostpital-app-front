@@ -78,7 +78,7 @@ export class PerfilComponent implements OnInit {
       .catch((err) => Swal.fire({
         text: err.msg,
         icon: 'error'
-      }))
+      }));
   }
 
 }

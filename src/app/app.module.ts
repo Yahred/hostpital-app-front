@@ -11,9 +11,6 @@ import { NopagefoundComponent } from './nopagefound/nopagefound.component';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 
-
-
-
 @NgModule({
   declarations: [
     AppComponent,

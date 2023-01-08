@@ -1,0 +1,48 @@
+<div class="fondo-modal-imagen oculto animated fadeIn fast"
+    [class.oculto]="modalService.ocultarModal">
+    <div id="responsive-modal" class="modal fade show" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Cargar imagen</h4>
+                    <button 
+                        type="button" 
+                        class="close" 
+                        data-dismiss="modal" 
+                        aria-hidden="true"
+                        (click)="cerrarModal()"
+                        >×</button>
+                </div>
+                <div class="modal-body">
+                    <h3>Seleccione una imagen</h3>
+                    <div class="text-center">
+                        <img [src]="imgTemp || modalService.img" class="img-avatar">
+                    </div>
+                    <br>
+                    <br>
+                    <div class="mb-3">
+                        <input 
+                            (change)="cambiarImagen($event.target.files[0])"
+                            class="form-control" 
+                            type="file">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button 
+                        (click)="cerrarModal()"
+                        type="button" 
+                        class="btn btn-default waves-effect" 
+                        data-dismiss="modal">
+                        Cerrar
+                    </button>
+                    <button
+                        (click)="guardarImagen()" 
+                        type="button" 
+                        class="btn btn-primary waves-effect waves-light">
+                        Cargar imagen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

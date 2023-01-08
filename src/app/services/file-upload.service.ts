@@ -34,9 +34,8 @@ export class FileUploadService {
       const { nombreArchivo } = await response.json();
       this.usuarioService.usuario.img = nombreArchivo;
 
-      return true;
+      return nombreArchivo;
     } catch (error) {
-      console.log('asasas')
       throw error;
     }
   }

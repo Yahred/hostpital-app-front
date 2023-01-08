@@ -3,11 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 import { of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, delay, map, tap } from 'rxjs/operators';
 
 import { Usuario } from '../models'
 
-import { ActualizarPerfilForm, RegisterForm } from '../interfaces';
+import { ActualizarPerfilForm, PaginadoUsuarios, RegisterForm } from '../interfaces';
 import { environment } from 'src/environments/environment';
 
 const { base_url } = environment;
@@ -27,12 +27,20 @@ export class UsuarioService {
     private ngZone: NgZone
   ) { }
 
+  get uid(): string {
+    return this.usuario.uid || '';
+  }
+  
   get token () {
     return localStorage.getItem('token') || '';
   }
 
-  get uid(): string {
-    return this.usuario.uid || '';
+  get headers() {
+    return {
+      headers: {
+        Authorization: this.token
+      }
+    }
   }
 
   crearUsuario( formData: RegisterForm ){
@@ -84,13 +92,13 @@ export class UsuarioService {
       ...usuario,
       role: this.usuario.role
     }
+    
     return this.http.put(base_url + '/usuarios/' + this.uid, usuario, {
       headers: {
         'Authorization': this.token
       }
     }).pipe(
       tap((resp: any) => {
-        console.log(resp.usuarioActualizado);
         const { nombre, email } = resp.usuarioActualizado;
 
         this.usuario.nombre = nombre;
@@ -103,6 +111,31 @@ export class UsuarioService {
     localStorage.removeItem('token');
 
     google.accounts.id.revoke('yahredmax@gmail.com', () => {});
+  }
+
+  obtenerPaginacion(desde: number){
+    const url = `${base_url}/usuarios?desde=${desde}`;
+    return this.http.get<PaginadoUsuarios>(url, this.headers)
+      .pipe(
+        delay(200),
+        map(resp => {
+          resp.usuarios = resp.usuarios.map(
+            user => new Usuario(user.nombre, user.email, '', user.google, user.img, user.role, user.uid)
+          );
+          return resp;
+        })
+      );
+  }
+
+  eliminarUsuario(uid: string){
+    const url = `${base_url}/usuarios/${uid}`;
+
+    return this.http.delete(url, this.headers);
+  }
+
+  guardarUsuario(usuario: Usuario){
+
+    return this.http.put(base_url + '/usuarios/' + usuario.uid, usuario, this.headers);
   }
 
 }
