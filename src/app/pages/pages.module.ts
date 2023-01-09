@@ -5,8 +5,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 
 // Modulos
 import { SharedModule } from '../shared/shared.module';
-import { ComponentsModule } from '../components/components.module';
+import { PipesModule } from '../pipes/pipes.module';
 
+//Componentes
+import { ComponentsModule } from '../components/components.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ProgressComponent } from './progress/progress.component';
 import { Grafica1Component } from './grafica1/grafica1.component';
@@ -16,8 +18,11 @@ import { PromesasComponent } from './promesas/promesas.component';
 import { RxjsComponent } from './rxjs/rxjs.component';
 import { PerfilComponent } from './perfil/perfil.component';
 import { UsuariosComponent } from './mantenimientos/usuarios/usuarios.component';
-import { AvatarComponent } from './mantenimientos/usuarios/avatar/avatar.component';
 import { SelectRoleComponent } from './mantenimientos/usuarios/select-role/select-role.component';
+import { MedicosComponent } from './mantenimientos/medicos/medicos.component';
+import { HospitalesComponent } from './mantenimientos/hospitales/hospitales.component';
+import { RegistroMedicoComponent } from './mantenimientos/medicos/registro-medico/registro-medico.component';
+
 
 @NgModule({
   declarations: [
@@ -31,6 +36,9 @@ import { SelectRoleComponent } from './mantenimientos/usuarios/select-role/selec
     PerfilComponent,
     UsuariosComponent,
     SelectRoleComponent,
+    MedicosComponent,
+    HospitalesComponent,
+    RegistroMedicoComponent,
   ],
   exports: [
     DashboardComponent,
@@ -46,6 +54,7 @@ import { SelectRoleComponent } from './mantenimientos/usuarios/select-role/selec
     RouterModule,
     ComponentsModule,
     ReactiveFormsModule,
+    PipesModule
   ]
 })
 export class PagesModule { }

@@ -1,9 +1,7 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { EventEmitter, Inject, Injectable } from '@angular/core';
 
-import { environment } from 'src/environments/environment';
 import { Tipo } from '../interfaces';
 
-const { base_url } = environment
 
 @Injectable({
   providedIn: 'root'
@@ -22,14 +20,16 @@ export class ModalImagenService {
     return this._ocultarModal;
   }
 
-  constructor() { }
+  constructor(
+    @Inject('BASE_API_URL') private baseUrl: string
+  ) { }
 
   public abrirModal(tipo: Tipo, id: string, img: string = 'no-img'){
     this.tipo = tipo;
     this.id = id;
 
     if(img.includes('https')) this.img = img;
-    else this.img = `${base_url}/uploads/${tipo}/${img}`
+    else this.img = `${this.baseUrl}/uploads/${tipo}/${img}`
 
     this._ocultarModal = false;
   }

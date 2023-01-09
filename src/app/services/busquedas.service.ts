@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { map } from 'rxjs/operators';
+import { debounceTime, map } from 'rxjs/operators';
 
-import { environment } from '../../environments/environment';
-import { Usuario } from '../models';
+import { Medico, Usuario } from '../models';
+import { Hospital } from '../models/hospital.model';
 
-const { base_url } = environment;
 
 @Injectable({
   providedIn: 'root'
@@ -17,24 +16,21 @@ export class BusquedasService {
     private http: HttpClient
   ) { }
 
-  get token () {
-    return localStorage.getItem('token') || '';
-  }
-
-  get headers() {
-    return {
-      headers: {
-        Authorization: this.token
-      }
-    }
-  }
 
   transformarRespuesta(tipo: string, resp: any[]){
-    const mapa= {
-      'usuarios': (resp) => this.crearInstanciasUsuarios(resp)
+    const mapa = {
+      'usuarios': (resp) => this.crearInstanciasUsuarios(resp),
+      'hospitales': (resp) => this.crearInstanciasHospitales(resp),
+      'medicos': (resp) => this.crearInstanciasMedicos(resp)
     }
 
     return mapa[tipo](resp);
+  }
+
+  crearInstanciasMedicos(resp){
+    return resp.resultado.map(
+      ({nombre, img, id, hospital, usuario}) => new Medico(nombre, id, img, hospital, usuario)
+    );
   }
 
   crearInstanciasUsuarios(resp){
@@ -42,11 +38,17 @@ export class BusquedasService {
       ({nombre, email, img, role, google, uid}) => new Usuario(nombre, email, '', google, img, role, uid))
   }
 
+  crearInstanciasHospitales(resp){
+    return resp.resultado.map(
+      ({nombre, img, usuario, id}) => new Hospital(nombre, img, id, usuario)
+    );
+  }
+
   buscar(tipo: 'usuarios'|'medicos'|'hospitales',
     termino: string = ''
   ){
-    const url = base_url + `/todo/coleccion/${tipo}/${termino}`
-    return this.http.get(url, this.headers)
+    const url = `/todo/coleccion/${tipo}/${termino}`
+    return this.http.get(url)
       .pipe(
         map(
           (resp: any[]) => this.transformarRespuesta(tipo, resp)

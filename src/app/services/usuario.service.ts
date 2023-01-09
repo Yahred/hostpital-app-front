@@ -2,15 +2,14 @@ import { Injectable, NgZone } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { catchError, delay, map, tap } from 'rxjs/operators';
 
 import { Usuario } from '../models'
 
 import { ActualizarPerfilForm, PaginadoUsuarios, RegisterForm } from '../interfaces';
-import { environment } from 'src/environments/environment';
+import { swalError } from '../utilities/swal';
 
-const { base_url } = environment;
 
 declare const google: any;
 
@@ -30,21 +29,9 @@ export class UsuarioService {
   get uid(): string {
     return this.usuario.uid || '';
   }
-  
-  get token () {
-    return localStorage.getItem('token') || '';
-  }
-
-  get headers() {
-    return {
-      headers: {
-        Authorization: this.token
-      }
-    }
-  }
 
   crearUsuario( formData: RegisterForm ){
-    return this.http.post(base_url + '/usuarios', formData)
+    return this.http.post('/usuarios', formData)
                     .pipe(
                       tap((resp: any) => {
                         localStorage.setItem('token', resp.token);
@@ -53,7 +40,7 @@ export class UsuarioService {
   }
 
   login(formData: RegisterForm){
-    return this.http.post(base_url + '/login', formData)
+    return this.http.post('/login', formData)
                       .pipe(
                         tap((resp: any) => {
                           localStorage.setItem('token', resp.token);
@@ -62,20 +49,17 @@ export class UsuarioService {
   }
 
   loginGoogle(token: string){
-    return this.http.post(base_url + '/login/google', {token})
+    return this.http.post('/login/google', {token})
                       .pipe(
                         tap((resp: any) => {
                           localStorage.setItem('token', resp.token);
-                        })
+                        }),
+                        catchError(() => throwError('La contraseña o el email son incorrectos'))
                       );
   }
 
   validarToken(){
-    return this.http.get(base_url + '/login/renew', {
-      headers: {
-        'Authorization': this.token
-      }
-    }).pipe(
+    return this.http.get('/login/renew').pipe(
       map((resp: any) => {
         const { nombre, email, img = '', google, role, uid } = resp.usuario;
 
@@ -93,11 +77,7 @@ export class UsuarioService {
       role: this.usuario.role
     }
     
-    return this.http.put(base_url + '/usuarios/' + this.uid, usuario, {
-      headers: {
-        'Authorization': this.token
-      }
-    }).pipe(
+    return this.http.put('/usuarios/' + this.uid, usuario).pipe(
       tap((resp: any) => {
         const { nombre, email } = resp.usuarioActualizado;
 
@@ -114,8 +94,8 @@ export class UsuarioService {
   }
 
   obtenerPaginacion(desde: number){
-    const url = `${base_url}/usuarios?desde=${desde}`;
-    return this.http.get<PaginadoUsuarios>(url, this.headers)
+    const url = `/usuarios?desde=${desde}`;
+    return this.http.get<PaginadoUsuarios>(url)
       .pipe(
         delay(200),
         map(resp => {
@@ -128,14 +108,14 @@ export class UsuarioService {
   }
 
   eliminarUsuario(uid: string){
-    const url = `${base_url}/usuarios/${uid}`;
+    const url = `/usuarios/${uid}`;
 
-    return this.http.delete(url, this.headers);
+    return this.http.delete(url);
   }
 
   guardarUsuario(usuario: Usuario){
 
-    return this.http.put(base_url + '/usuarios/' + usuario.uid, usuario, this.headers);
+    return this.http.put('/usuarios/' + usuario.uid, usuario);
   }
 
 }

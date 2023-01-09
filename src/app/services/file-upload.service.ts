@@ -1,17 +1,15 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 
 import { UsuarioService } from './usuario.service';
 
-import { environment } from '../../environments/environment';
-
-const { base_url } = environment;
 @Injectable({
   providedIn: 'root'
 })
 export class FileUploadService {
 
   constructor(
-    private usuarioService: UsuarioService
+    private usuarioService: UsuarioService,
+    @Inject('BASE_API_URL') private baseUrl: string
   ) { }
 
   async actualizarFoto(
@@ -20,14 +18,15 @@ export class FileUploadService {
     id: string
   ){
     try {
-      const url = `${base_url}/uploads/${tipo}/${id}`;
+      const url = `${this.baseUrl}/uploads/${tipo}/${id}`;
       const formData = new FormData();
       formData.append('imagen', archivo);
+      const token = localStorage.getItem('token');
 
       const response: any = await fetch(url, {
         method: 'PUT',
         headers: {
-          'Authorization': this.usuarioService.token
+          'Authorization': token
         },
         body: formData
       });

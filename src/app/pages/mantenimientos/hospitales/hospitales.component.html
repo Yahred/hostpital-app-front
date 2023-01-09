@@ -1,0 +1,95 @@
+<div class="row animated fadeIn fast">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <input 
+                    #txtBusqueda
+                    (keyup)="buscarHospitales(txtBusqueda.value)"
+                    type="text" 
+                    class="form-control"
+                    placeholder="Buscar hospital">
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="isLoading" class="row animated fadeIn fast">
+    <div class="col-12">
+        <div class="alert | alert-info | text-center">
+            <h4 class="alert-heading">Cargando</h4>
+            <i class="fa fa-spin fa-refresh fa-2x"></i>
+            <p class="mb-0">Por favor espere</p>
+        </div>
+    </div>
+</div>
+<div *ngIf="!isLoading" class="row">
+    <div class="col-12">
+        <div class="card">
+
+            <div class="card-body">
+                
+                <div class="row">
+                  <div class="col-6">
+                    <h4 class="card-title">Hospitales (Total: {{listadoHospitales.length}})</h4>
+                    <h6 class="card-subtitle">Hospitales registrados en la aplicación</h6>
+                  </div>
+                    <div class="col">
+                        <div class="text-right">
+                            <button 
+                                (click)="abrirModalRegistro()"
+                                class="btn btn-primary">
+                                <i class="fa fa-hospital-o"></i>
+                                Crear hospital
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Foto</th>
+                                <th class="w-100">Nombre</th>
+                                <th class="text-nowrap">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let hospital of listadoHospitales">
+                                <td> <img
+                                        (click)="abrirModalImagen(hospital.id, hospital.img)"
+                                        class="img-avatar | cursor" 
+                                        [src]="hospital.img | imagen: 'hospitales'" 
+                                        [alt]="hospital.nombre">
+                                </td>
+                                <td>
+                                    <input 
+                                        type="text" 
+                                        class="form-control"
+                                        [value]="hospital.nombre"
+                                        #txtNombre
+                                    >
+                                </td>
+                                <td class="text-nowrap">
+                                    <a 
+                                        (click)="guardarCambios(hospital.id, txtNombre.value)"
+                                        class="cursor"
+                                        data-toggle="tooltip" 
+                                        data-original-title="Editar"> 
+                                        <i class="fa fa-pencil text-inverse m-r-10"></i> 
+                                    </a>
+                                    <a 
+                                        (click)="eliminarHospital(hospital.id)"
+                                        class="cursor"
+                                        data-toggle="tooltip" 
+                                        data-original-title="Borrar"> 
+                                        <i class="fa fa-close text-danger"></i> 
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

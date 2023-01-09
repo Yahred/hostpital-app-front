@@ -135,7 +135,7 @@ export class UsuariosComponent implements OnInit, OnDestroy {
 
     swalConfirm(`La acción eliminará al usuario ${usuario.nombre} permanentemente`)
       .then((result) => {
-        if(result.isDenied) return;
+        if(result.isDenied || result.isDismissed) return;
 
         this.usuarioService.eliminarUsuario(usuario.uid)
           .subscribe(() => {
